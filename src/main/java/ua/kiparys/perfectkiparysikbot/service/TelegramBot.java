@@ -19,6 +19,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ua.kiparys.perfectkiparysikbot.Joke;
 import ua.kiparys.perfectkiparysikbot.Movie;
+import ua.kiparys.perfectkiparysikbot.Weather;
 import ua.kiparys.perfectkiparysikbot.config.BotConfig;
 import ua.kiparys.perfectkiparysikbot.model.User;
 import ua.kiparys.perfectkiparysikbot.model.UserRepository;
@@ -36,12 +37,14 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     final BotConfig config;
 
+    Weather weatherSample = new Weather();
+
     final static String ERROR_TEXT = "Error occurred: ";
 
     final static String HELP_TEXT = "Цей бот був створений, щоб зробити ваше життя трішечки кращим \n\n" +
             "Натисніть /start щоб побачити повідомлення з привітанням\n\n" +
             "Натисніть /mydata щоб побачити, які дані про вас зберігаються в пам'яті бота\n\n" +
-            "Натисніть /deletedata to delete data about yourself\n\n" +
+            "Натисніть /deletedata щоб видалити інформацію про себе\n\n" +
             "Натисніть /help щоб побачити це повідомлення знову";
 
 
@@ -118,7 +121,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                         movieSearch(chatId, recommendedMovie);
                         break;
                     case "Погода":
-                        weather(chatId);
+                        weatherCheck(chatId);
                         break;
                     case "Мапа тривог":
                         sendMessage(chatId, "https://alerts.in.ua");
@@ -131,44 +134,13 @@ public class TelegramBot extends TelegramLongPollingBot {
             long messageId = update.getCallbackQuery().getMessage().getMessageId();
             long chatId = update.getCallbackQuery().getMessage().getChatId();
 
-            if(callbackData.equals("ODS")){
-                String text = "https://ua.sinoptik.ua/погода-одеса";
-                executeEditMessageText(text, chatId, messageId);
-            }else if(callbackData.equals("KIR")){
-                String text = "https://ua.sinoptik.ua/погода-кропивницький";
-                executeEditMessageText(text, chatId, messageId);
-            }
+            executeEditMessageText(weatherSample.weatherSender(callbackData), chatId, messageId);
         }
     }
 
-    private void weather(long chatId) {
+    private void weatherCheck(long chatId) {
 
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText("Яка саме область Вас цікавить?");
-
-        InlineKeyboardMarkup markupInLine = new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
-        List<InlineKeyboardButton> rowInLine = new ArrayList<>();
-
-        var buttonKir = new InlineKeyboardButton();   //пока только 2 области
-        buttonKir.setText("Кіровоградська");
-        buttonKir.setCallbackData("KIR");
-
-        var buttonOds = new InlineKeyboardButton();
-        buttonOds.setText("Одеська");
-        buttonOds.setCallbackData("ODS");
-
-        rowInLine.add(buttonKir);
-        rowInLine.add(buttonOds);
-
-        rowsInLine.add(rowInLine);
-
-        markupInLine.setKeyboard(rowsInLine);
-
-        message.setReplyMarkup(markupInLine);
-
-        executeMessage(message);
+        executeMessage(weatherSample.weather(chatId));
     }
 
     private void registerUser(Message msg) {
@@ -215,14 +187,11 @@ public class TelegramBot extends TelegramLongPollingBot {
         KeyboardRow row = new KeyboardRow();
         row.add("Погода");
         row.add("Випадковий жарт");
-        //row.add("help");                 //добавить кнопочек с функциями
         keyboardRows.add(row);
 
         row = new KeyboardRow();
-        //row.add("register");
         row.add("Мапа тривог");
         row.add("Що б його глянути...");
-        //keyboardRows.add(row);
         keyboardRows.add(row);
 
         keyboardMarkup.setKeyboard(keyboardRows);
