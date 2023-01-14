@@ -21,6 +21,7 @@ At the moment, testing is underway with an experienced focus group (my friends).
 - Shows the alerts map.
 - Yes, it would be cool to add up-to-date information on turning off the electricity here. 
   But, let's be honest, "up-to-date" information is nowhere to be found now.
+- Also user can check saved information about himself and delete it if necessary.
 
 
 
