@@ -66,10 +66,8 @@
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-data-jpa</artifactId>
-                <configuration>
-                    <executable>true</executable>
-                </configuration>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                
             </plugin>
         </plugins>
     </build>
